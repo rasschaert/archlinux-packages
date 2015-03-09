@@ -1,0 +1,39 @@
+# Maintainer: Yuval Adam <yuval at y3xz dot com> PGP-Key: 271386AA2EB7672F
+
+pkgname=libwallet-git
+pkgver=v0.4.116.g3cdfebd
+pkgrel=1
+pkgdesc="Wallet related functionality forked from libbitcoin"
+arch=('any')
+url="https://github.com/spesmilo/libwallet"
+license=(AGPL)
+provides=('libwallet')
+source=('git+https://github.com/spesmilo/libwallet')
+sha1sums=('SKIP')
+_gitname=libwallet
+
+pkgver() {
+  cd $_gitname
+  echo $(git describe --always | sed 's/-/./g')
+}
+
+build() {
+  cd $_gitname
+  autoreconf -i
+  ./configure \
+    --prefix=/usr \
+    --sbindir=/usr/bin \
+    --libexecdir=/usr/lib/libwallet \
+    --sysconfdir=/etc \
+    --sharedstatedir=/usr/share/libwallet \
+    --localstatedir=/var/lib/libwallet \
+    --with-gnu-ld
+  make 
+}
+
+package() {
+  cd $_gitname
+  make DESTDIR="$pkgdir" install
+}
+
+# vim:set ts=2 sw=2 et:

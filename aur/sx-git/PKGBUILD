@@ -1,0 +1,34 @@
+# Maintainer: Yuval Adam <yuval at y3xz dot com> PGP-Key: 271386AA2EB7672F
+
+pkgname=sx-git
+pkgver=b5af31c
+pkgrel=1
+pkgdesc="Command line bitcoin to empower the sysadmin"
+arch=('any')
+url="https://github.com/spesmilo/sx"
+license=(AGPL)
+depends=('boost' 'libconfig' 'openssl' 'leveldb' 'ncurses' 'wget' 'secp256k1-git' 'libbitcoin-git' 'libwallet-git')
+provides=('sx')
+source=('git+https://github.com/spesmilo/sx/') 
+sha1sums=('SKIP')
+_gitname=sx
+
+pkgver() {
+  cd $_gitname
+  echo $(git describe --always | sed 's/-/./g')
+}
+
+build() {
+  cd $_gitname
+  autoreconf -i
+  ./configure --prefix=/usr
+  make 
+}
+
+package() {
+  cd $_gitname
+  make DESTDIR="$pkgdir" install
+  sed -i 's/python/python2/' $pkgdir/usr/bin/sx 
+}
+
+# vim:set ts=2 sw=2 et:
